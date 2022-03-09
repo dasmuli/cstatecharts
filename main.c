@@ -16,6 +16,7 @@ struct cs
   int timer;  /* idea: increase timer in milliseconds outside */
   const char* current_state_name;
   int execute_on_enter;
+  int execute_on_exit;
 };
 
 #define CS_PRINTF printf
@@ -33,7 +34,7 @@ struct cs
 #define TRANSITION(cs,event,name)     \
         CS_PRINTF("%s -> %s\n",cs->current_state_name, #name);
 #define ON_ENTER if( 0 )
-#define END_STATE(name) 
+#define ON_EXIT if( 0 )
 #define INIT(cs)  
 #define BEGIN(cs)  
 #define END(cs)   
@@ -51,20 +52,26 @@ struct cs
 #define TRANSITION(cs,event,name)               \
   do {                                          \
     if(cs->transition == event) {               \
-      cs->execute_on_enter=1;                   \
-      goto state_##name;                        \
+      if(cs->execute_on_exit == 0) {            \
+        cs->execute_on_exit = 1;                \
+      } else {                                  \
+        cs->execute_on_enter=1;                 \
+        cs->execute_on_exit = 0;                \
+        goto state_##name;                      \
+      }                                         \
     }                                           \
   } while (0)
 
 #define ON_ENTER if( cs->execute_on_enter )
-
-#define INIT(cs)   LC_INIT((cs)->lc); (cs)->execute_on_enter = 1; 
+#define ON_EXIT if( cs->execute_on_exit )
+#define INIT(cs)   LC_INIT((cs)->lc); (cs)->execute_on_enter = 1; (cs)->execute_on_exit = 0; 
 #define BEGIN(cs)  { char CS_YIELD_FLAG = 1; LC_RESUME((cs)->lc)
 #define END(cs)    LC_END((pt)->lc); CS_YIELD_FLAG = 0; \
                     INIT(cs); return CS_ENDED; }
 #define ENDSTATE(cs,name)			\
-    CS_YIELD_FLAG = 0;				\
     cs->execute_on_enter=0;                     \
+    if(cs->execute_on_exit == 0)                \
+      CS_YIELD_FLAG = 0;		        \
     goto state_##name; 				
 
 #endif
@@ -79,6 +86,10 @@ static int statemachine1(struct cs* cs)
     {
       printf("state 1\n");
     }
+    ON_EXIT
+    {
+      printf("Left state 1\n");
+    }
   ENDSTATE(cs,first);
   
   STATE(cs,second)
@@ -87,6 +98,11 @@ static int statemachine1(struct cs* cs)
     {
       printf("state 2\n");
     }
+    ON_EXIT
+    {
+      printf("Left state 2\n");
+    }
+    //SUBSTATE(statemachine2,cs2)
   ENDSTATE(cs,second);
 
   END(cs)
