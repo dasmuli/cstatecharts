@@ -15,7 +15,7 @@ struct cs
   lc_t lc;
   int timer;  /* idea: increase timer in milliseconds outside */
   const char* current_state_name;
-  int print;
+  int execute_on_enter;
 };
 
 #define CS_PRINTF printf
@@ -25,7 +25,7 @@ struct cs
 #define CS_EXITED  2
 #define CS_ENDED   3
 
-#define DOCUMENT 1
+#define DOCUMENT 0
 
 #if DOCUMENT == 1
 
@@ -50,14 +50,16 @@ struct cs
 
 #define TRANSITION(cs,event,name)               \
   do {                                          \
-    if(cs->transition == event)                 \
+    if(cs->transition == event) {               \
+      cs->execute_on_enter=1;                   \
       goto state_##name;                        \
+    }                                           \
   } while (0)
 
-#define ON_ENTER if( 1 )
-#define END_STATE(name) sd.transition = getchar();  goto state_##name
+#define ON_ENTER if( cs->execute_on_enter )
+#define END_STATE(name) sd.transition = getchar(); cs->execute_on_enter=0; goto state_##name
 
-#define INIT(cs)   LC_INIT((cs)->lc) 
+#define INIT(cs)   LC_INIT((cs)->lc); (cs)->execute_on_enter = 1;
 #define BEGIN(cs)  { char CS_YIELD_FLAG = 1; LC_RESUME((cs)->lc)
 #define END(cs)    LC_END((pt)->lc); CS_YIELD_FLAG = 0; \
                       INIT(cs); return CS_ENDED; }
@@ -101,10 +103,14 @@ int main(int argc, char* argv[])
   statemachine1(&cs1);
   CS_PRINTF("}\n");
 #else  
+  CS_PRINTF("Enter 1 or 2 to change states\n");
   while(1)
   {
     statemachine1(&cs1);
-    cs1.transition = getchar();
+    //cs1.transition = getchar();
+    char a;
+    scanf( " %c", &a );
+    cs1.transition = a;
   }
 #endif
 }
