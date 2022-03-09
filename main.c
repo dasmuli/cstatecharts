@@ -25,6 +25,23 @@ struct cs
 #define CS_EXITED  2
 #define CS_ENDED   3
 
+#define DOCUMENT 1
+
+#if DOCUMENT == 1
+
+#define STATE(cs,name) cs->current_state_name = #name;                          
+#define TRANSITION(cs,event,name)     \
+        CS_PRINTF("%s -- %s\n",cs->current_state_name, #name);
+#define ON_ENTER if( 0 )
+#define END_STATE(name) 
+#define INIT(cs)  
+#define BEGIN(cs)  
+#define END(cs)   
+#define ENDSTATE(cs,name)			
+
+
+#else
+
 #define STATE(cs,name)                          \
     state_##name:                               \
     LC_SET((cs)->lc);				\
@@ -47,6 +64,8 @@ struct cs
 #define ENDSTATE(cs,name)			\
     CS_YIELD_FLAG = 0;				\
     goto state_##name; 				
+
+#endif
 
 static int statemachine1(struct cs* cs)
 {
@@ -79,11 +98,15 @@ int main(int argc, char* argv[])
 
   INIT(&cs1);
 
+#if DOCUMENT == 1
+  statemachine1(&cs1);
+#else  
   while(1)
   {
     statemachine1(&cs1);
     cs1.transition = getchar();
   }
+#endif
 }
 
 
