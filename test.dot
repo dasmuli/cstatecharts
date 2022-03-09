@@ -1,0 +1,4 @@
+digraph D {
+first -> second
+second -> first
+}

@@ -31,7 +31,7 @@ struct cs
 
 #define STATE(cs,name) cs->current_state_name = #name;                          
 #define TRANSITION(cs,event,name)     \
-        CS_PRINTF("%s -- %s\n",cs->current_state_name, #name);
+        CS_PRINTF("%s -> %s\n",cs->current_state_name, #name);
 #define ON_ENTER if( 0 )
 #define END_STATE(name) 
 #define INIT(cs)  
@@ -94,12 +94,12 @@ static struct cs cs1,cs2;
 
 int main(int argc, char* argv[])
 {
-  printf("Hello state\n");
-
   INIT(&cs1);
 
 #if DOCUMENT == 1
+  CS_PRINTF("digraph D {\n");
   statemachine1(&cs1);
+  CS_PRINTF("}\n");
 #else  
   while(1)
   {
