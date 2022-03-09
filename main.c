@@ -57,14 +57,14 @@ struct cs
   } while (0)
 
 #define ON_ENTER if( cs->execute_on_enter )
-#define END_STATE(name) sd.transition = getchar(); cs->execute_on_enter=0; goto state_##name
 
-#define INIT(cs)   LC_INIT((cs)->lc); (cs)->execute_on_enter = 1;
+#define INIT(cs)   LC_INIT((cs)->lc); (cs)->execute_on_enter = 1; 
 #define BEGIN(cs)  { char CS_YIELD_FLAG = 1; LC_RESUME((cs)->lc)
 #define END(cs)    LC_END((pt)->lc); CS_YIELD_FLAG = 0; \
-                      INIT(cs); return CS_ENDED; }
+                    INIT(cs); return CS_ENDED; }
 #define ENDSTATE(cs,name)			\
     CS_YIELD_FLAG = 0;				\
+    cs->execute_on_enter=0;                     \
     goto state_##name; 				
 
 #endif
@@ -107,7 +107,6 @@ int main(int argc, char* argv[])
   while(1)
   {
     statemachine1(&cs1);
-    //cs1.transition = getchar();
     char a;
     scanf( " %c", &a );
     cs1.transition = a;
