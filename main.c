@@ -4,14 +4,10 @@
 #include "stdlib.h"
 #include "lc.h"
 
-struct state_data
-{
-  int transition;
-};
 
 struct cs
 {
-  int transition;
+  int event;
   lc_t lc;
   int timer;  /* idea: increase timer in milliseconds outside */
   const char* current_state_name;
@@ -49,9 +45,9 @@ struct cs
     if(CS_YIELD_FLAG == 0) 			\
       return CS_YIELDED;			
 
-#define TRANSITION(cs,event,name)               \
+#define TRANSITION(cs,ev,name)                  \
   do {                                          \
-    if(cs->transition == event) {               \
+    if(cs->event == ev) {                       \
       if(cs->execute_on_exit == 0) {            \
         cs->execute_on_exit = 1;                \
       } else {                                  \
@@ -102,7 +98,7 @@ static int statemachine1(struct cs* cs)
     {
       printf("Left state 2\n");
     }
-    //SUBSTATE(statemachine2,cs2)
+    //SUBSTATE(statemachine2,cs2,)
   ENDSTATE(cs,second);
 
   END(cs)
@@ -125,7 +121,7 @@ int main(int argc, char* argv[])
     statemachine1(&cs1);
     char a;
     scanf( " %c", &a );
-    cs1.transition = a;
+    cs1.event = a;
   }
 #endif
 }
