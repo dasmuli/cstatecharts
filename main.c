@@ -30,11 +30,11 @@ struct cs
 
 #define STATE(cs,name) cs->current_state_name = #name;                          
 #define TRANSITION(cs,event,name)     \
-        CS_PRINTF("\"%s_%s\" [label = \"%s\"];",\
+        CS_PRINTF("\"%s_%s\" [label = \"%s\"];\n",\
             cs->parent_state_name,    \
             cs->current_state_name,   \
             cs->current_state_name);  \
-        CS_PRINTF("\"%s_%s\" [label = \"%s\"];",\
+        CS_PRINTF("\"%s_%s\" [label = \"%s\"];\n",\
             cs->parent_state_name,    \
             #name, #name );           \
         CS_PRINTF("%s_%s -> %s_%s\n", \
@@ -59,6 +59,8 @@ struct cs
 
 
 #else
+
+int __ev = 0;
 
 #define STATE(cs,name)                          \
     state_##name:                               \
@@ -90,13 +92,47 @@ struct cs
     if(cs->execute_on_exit == 0)                \
       CS_YIELD_FLAG = 0;		        \
     goto state_##name; 				
-#define EXECUTE_BEGIN int __ev = 0; while(1) {
+#define EXECUTE_BEGIN  while(1) {
 #define EXECUTE_END __ev = cs_get_next_event(); }
 #define RUN( state_func, p_state_data )        \
   p_state_data.event = __ev;                   \
   state_func( &p_state_data );
 
 #endif
+
+static struct cs cs1,cs2, cs_nested;
+
+static int statemachine_nested(struct cs* cs)
+{
+  BEGIN(cs)
+
+  STATE(cs,first)
+    TRANSITION(cs,'7', second);
+    ON_ENTER
+    {
+      printf("NESTED state 6\n");
+    }
+    ON_EXIT
+    {
+      printf("NESTED left state 6\n");
+    }
+  ENDSTATE(cs,first);
+  
+  STATE(cs,second)
+    TRANSITION(cs,'6', first);
+    ON_ENTER
+    {
+      printf("NESTED state 7\n");
+    }
+    ON_EXIT
+    {
+      printf("NESTED left state 7\n");
+    }
+  ENDSTATE(cs,second);
+
+  END(cs)
+}
+
 
 static int statemachine1(struct cs* cs)
 {
@@ -124,7 +160,7 @@ static int statemachine1(struct cs* cs)
     {
       printf("Left state 2\n");
     }
-    //RUN(statemachine2,cs2,cs->event) -> bei Doku subgraph?
+    RUN(statemachine_nested, cs_nested);
   ENDSTATE(cs,second);
 
   END(cs)
@@ -173,6 +209,7 @@ static int statemachine2(struct cs* cs)
 
   END(cs)
 }
+
 int cs_get_next_event()
 {
   char ev;
@@ -180,12 +217,11 @@ int cs_get_next_event()
   return (int) ev;
 }
 
-static struct cs cs1,cs2;
-
 int main(int argc, char* argv[])
 {
   INIT(&cs1);
   INIT(&cs2);
+  INIT(&cs_nested);
 
   EXECUTE_BEGIN 
     
