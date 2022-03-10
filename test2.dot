@@ -1,0 +1,27 @@
+digraph Test 
+{
+    compound = true;
+
+    subgraph cluster_cm1 {
+      style = rounded
+      label = state1
+      cm1_C [ label = "C", style = invis ];
+    }
+
+    subgraph cluster_cm2 {
+      style = rounded
+      label = state2
+      cm2_C [ label = "C", style = invis ];
+
+      subgraph cluster_cm3 {
+        style = rounded
+        label = state3
+        cm2_C [ label = "C", style = invis ];
+      }
+
+    }
+
+    cm1_C -> cm2_C [ltail=cluster_cm1 lhead=cluster_cm2];
+
+
+}

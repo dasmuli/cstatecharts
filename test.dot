@@ -1,6 +1,8 @@
 digraph D {
+compound=true
 subgraph cluster_statemachine1 {
-  label = "statemachine1";
+style = rounded
+  label = < <table cellborder="0" border="0"> <tr><td width="47" >statemachine1</td></tr><hr/>   <tr><td></td></tr> </table> >;
 "statemachine1_first" [label = "first"];
 "statemachine1_second" [label = "second"];
 statemachine1_first -> statemachine1_second
@@ -8,7 +10,8 @@ statemachine1_first -> statemachine1_second
 "statemachine1_first" [label = "first"];
 statemachine1_second -> statemachine1_first
 subgraph cluster_statemachine_nested {
-  label = "statemachine_nested";
+style = rounded
+  label = < <table cellborder="0" border="0"> <tr><td width="47" >statemachine_nested</td></tr><hr/>   <tr><td></td></tr> </table> >;
 "statemachine_nested_first" [label = "first"];
 "statemachine_nested_second" [label = "second"];
 statemachine_nested_first -> statemachine_nested_second
@@ -18,7 +21,8 @@ statemachine_nested_second -> statemachine_nested_first
 }
 }
 subgraph cluster_statemachine2 {
-  label = "statemachine2";
+style = rounded
+  label = < <table cellborder="0" border="0"> <tr><td width="47" >statemachine2</td></tr><hr/>   <tr><td></td></tr> </table> >;
 "statemachine2_first" [label = "first"];
 "statemachine2_second" [label = "second"];
 statemachine2_first -> statemachine2_second
