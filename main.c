@@ -28,33 +28,57 @@ struct cs
 
 #if DOCUMENT == 1
 
-#define STATE(cs,name) cs->current_state_name = #name;                          
+struct transition_data
+{
+  const char* ev;
+  const char* target_name; 
+};
+typedef struct transition_data transition_data_t;
+transition_data_t transition_data[100];
+int transition_count = 0;
+
+#define STATE(cs,name)                \
+  cs->current_state_name = #name;     \
+  transition_count = 0;               \
+  CS_PRINTF("subgraph cluster_%s_%s {\n",cs->parent_state_name,#name); \
+  CS_PRINTF("style = rounded\n");   \
+  CS_PRINTF("label = %s\n",#name);    \
+  CS_PRINTF("%s_%s_C [ style=invis, shape = plaintext, label=\"\", height=0, width=0 ];\n",\
+            cs->parent_state_name,#name);
+
 #define TRANSITION(cs,event,name)     \
-        CS_PRINTF("\"%s_%s\" [label = \"%s\"];\n",\
-            cs->parent_state_name,    \
-            cs->current_state_name,   \
-            cs->current_state_name);  \
-        CS_PRINTF("\"%s_%s\" [label = \"%s\"];\n",\
-            cs->parent_state_name,    \
-            #name, #name );           \
-        CS_PRINTF("%s_%s -> %s_%s\n", \
-            cs->parent_state_name,    \
-            cs->current_state_name,   \
-            cs->parent_state_name,    \
-            #name);
+   transition_data[transition_count].ev = #event; \
+   transition_data[transition_count].target_name = #name; \
+   transition_count++;
+  
+            
 #define ON_ENTER if( 0 )
 #define ON_EXIT if( 0 )
 #define INIT(cs)  
 #define BEGIN(cs)  
 #define END(cs)   
-#define ENDSTATE(cs,name)			
-#define EXECUTE_BEGIN CS_PRINTF("digraph D {\ncompound=true\n");
+#define ENDSTATE(cs,name) CS_PRINTF("}\n");	\
+    for(int i = 0; i < transition_count; i++)   \
+    CS_PRINTF("%s_%s_C -> %s_%s_C [ltail=cluster_%s_%s lhead=cluster_%s_%s ];\n",           \
+            cs->parent_state_name,              \
+            cs->current_state_name,             \
+            cs->parent_state_name,              \
+            transition_data[i].target_name,     \
+            cs->parent_state_name,              \
+            cs->current_state_name,             \
+            cs->parent_state_name,              \
+            transition_data[i].target_name);    \
+    cs->current_state_name = NULL;		
+#define EXECUTE_BEGIN                           \
+  CS_PRINTF("digraph D {\ncompound=true\n");    \
+  CS_PRINTF("graph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1.75\"];");
+  
 #define EXECUTE_END CS_PRINTF("}\n");
 #define RUN( state_func, state_data )           \
   CS_PRINTF( "subgraph cluster_%s {\nstyle = rounded\n", #state_func );    \
-  CS_PRINTF( "  label = < <table cellborder=\"0\" border=\"0\"> <tr><td width=\"47\" >%s</td></tr><hr/>   <tr><td></td></tr> </table> >;\n", #state_func );\
+  CS_PRINTF( "  label = %s\n", #state_func );\
   state_data.parent_state_name = #state_func;  \
-  state_func( &state_data );                    \
+  state_func( &state_data );                   \
   CS_PRINTF( "}\n" );   
 
 

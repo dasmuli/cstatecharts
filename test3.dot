@@ -5,15 +5,13 @@ digraph Test
     subgraph cluster_cm1 {
       style = rounded
       label = state1
-      node [ shape=point, peripheries=0, penwidth=0 ];
-      cm1_C [ peripheries=0, height=0, width=0 ]; 
+      cm1_C [style=invis, shape = plaintext, label="", height=0, width=0]; 
     }
 
     subgraph cluster_cm2 {
       style = rounded
       label = state2
-      node [ shape=point, peripheries=0, penwidth=0, margin=0 ];
-      cm2_C [ peripheries=0, height=0, width=0 ]; 
+      cm2_C [ style=invis, shape = plaintext, label="", height=0, width=0 ]; 
 
       subgraph cluster_cm3 {
         style = rounded
