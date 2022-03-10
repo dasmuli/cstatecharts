@@ -4,6 +4,14 @@
 #include "stdlib.h"
 #include "lc.h"
 
+/* http://viz-js.com/ */
+
+struct transition_data
+{
+  const char* ev;
+  const char* target_name; 
+};
+typedef struct transition_data transition_data_t;
 
 struct cs
 {
@@ -15,6 +23,8 @@ struct cs
   int execute_on_enter;
   int execute_on_exit;
   void* user_data;
+  transition_data_t transition_data[100];
+  int transition_count;
 };
 
 #define CS_PRINTF printf
@@ -28,18 +38,9 @@ struct cs
 
 #if DOCUMENT == 1
 
-struct transition_data
-{
-  const char* ev;
-  const char* target_name; 
-};
-typedef struct transition_data transition_data_t;
-transition_data_t transition_data[100];
-int transition_count = 0;
-
 #define STATE(cs,name)                \
   cs->current_state_name = #name;     \
-  transition_count = 0;               \
+  cs->transition_count = 0;               \
   CS_PRINTF("subgraph cluster_%s_%s {\n",cs->parent_state_name,#name); \
   CS_PRINTF("style = rounded\n");   \
   CS_PRINTF("label = %s\n",#name);    \
@@ -47,9 +48,9 @@ int transition_count = 0;
             cs->parent_state_name,#name);
 
 #define TRANSITION(cs,event,name)     \
-   transition_data[transition_count].ev = #event; \
-   transition_data[transition_count].target_name = #name; \
-   transition_count++;
+   cs->transition_data[cs->transition_count].ev = #event; \
+   cs->transition_data[cs->transition_count].target_name = #name; \
+   cs->transition_count++;
   
             
 #define ON_ENTER if( 0 )
@@ -58,16 +59,17 @@ int transition_count = 0;
 #define BEGIN(cs)  
 #define END(cs)   
 #define ENDSTATE(cs,name) CS_PRINTF("}\n");	\
-    for(int i = 0; i < transition_count; i++)   \
-    CS_PRINTF("%s_%s_C -> %s_%s_C [ltail=cluster_%s_%s lhead=cluster_%s_%s ];\n",           \
+    for(int i = 0; i < cs->transition_count; i++)   \
+    CS_PRINTF("%s_%s_C -> %s_%s_C [ltail=cluster_%s_%s lhead=cluster_%s_%s label=\"%s\" ];\n",           \
             cs->parent_state_name,              \
             cs->current_state_name,             \
             cs->parent_state_name,              \
-            transition_data[i].target_name,     \
+            cs->transition_data[i].target_name,     \
             cs->parent_state_name,              \
             cs->current_state_name,             \
             cs->parent_state_name,              \
-            transition_data[i].target_name);    \
+            cs->transition_data[i].target_name,      \
+            cs->transition_data[i].ev);             \
     cs->current_state_name = NULL;		
 #define EXECUTE_BEGIN                           \
   CS_PRINTF("digraph D {\ncompound=true\n");    \
