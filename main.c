@@ -13,6 +13,7 @@ struct cs
   const char* current_state_name;
   int execute_on_enter;
   int execute_on_exit;
+  void* user_data;
 };
 
 #define CS_PRINTF printf
@@ -35,6 +36,10 @@ struct cs
 #define BEGIN(cs)  
 #define END(cs)   
 #define ENDSTATE(cs,name)			
+#define EXECUTE_BEGIN CS_PRINTF("digraph D {\n");
+#define EXECUTE_END CS_PRINTF("}\n");
+#define RUN( state_func, p_state_data )        \
+  state_func( &p_state_data );
 
 
 #else
@@ -69,6 +74,11 @@ struct cs
     if(cs->execute_on_exit == 0)                \
       CS_YIELD_FLAG = 0;		        \
     goto state_##name; 				
+#define EXECUTE_BEGIN int __ev; while(1) {
+#define EXECUTE_END __ev = get_next_event(); }
+#define RUN( state_func, p_state_data )        \
+  p_state_data.event = __ev;                   \
+  state_func( &p_state_data );
 
 #endif
 
@@ -98,10 +108,17 @@ static int statemachine1(struct cs* cs)
     {
       printf("Left state 2\n");
     }
-    //SUBSTATE(statemachine2,cs2,)
+    //RUN(statemachine2,cs2,cs->event) -> bei Doku subgraph?
   ENDSTATE(cs,second);
 
   END(cs)
+}
+
+int get_next_event()
+{
+  char ev;
+  scanf( " %c", &ev );
+  return (int) ev;
 }
 
 static struct cs cs1,cs2;
@@ -110,20 +127,11 @@ int main(int argc, char* argv[])
 {
   INIT(&cs1);
 
-#if DOCUMENT == 1
-  CS_PRINTF("digraph D {\n");
-  statemachine1(&cs1);
-  CS_PRINTF("}\n");
-#else  
-  CS_PRINTF("Enter 1 or 2 to change states\n");
-  while(1)
-  {
-    statemachine1(&cs1);
-    char a;
-    scanf( " %c", &a );
-    cs1.event = a;
-  }
-#endif
+  EXECUTE_BEGIN 
+    
+    RUN( statemachine1, cs1 );
+
+  EXECUTE_END
 }
 
 
