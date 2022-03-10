@@ -1,4 +1,13 @@
 digraph D {
-first -> second
-second -> first
+subgraph cluster_statemachine1 {
+  label = "statemachine1";
+"statemachine1_first" [label = "first"];"statemachine1_second" [label = "second"];statemachine1_first -> statemachine1_second
+"statemachine1_second" [label = "second"];"statemachine1_first" [label = "first"];statemachine1_second -> statemachine1_first
+}
+subgraph cluster_statemachine2 {
+  label = "statemachine2";
+"statemachine2_first" [label = "first"];"statemachine2_second" [label = "second"];statemachine2_first -> statemachine2_second
+"statemachine2_second" [label = "second"];"statemachine2_third" [label = "third"];statemachine2_second -> statemachine2_third
+"statemachine2_third" [label = "third"];"statemachine2_first" [label = "first"];statemachine2_third -> statemachine2_first
+}
 }

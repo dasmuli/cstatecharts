@@ -11,6 +11,7 @@ struct cs
   lc_t lc;
   int timer;  /* idea: increase timer in milliseconds outside */
   const char* current_state_name;
+  const char* parent_state_name;
   int execute_on_enter;
   int execute_on_exit;
   void* user_data;
@@ -23,13 +24,24 @@ struct cs
 #define CS_EXITED  2
 #define CS_ENDED   3
 
-#define DOCUMENT 0
+#define DOCUMENT 1
 
 #if DOCUMENT == 1
 
 #define STATE(cs,name) cs->current_state_name = #name;                          
 #define TRANSITION(cs,event,name)     \
-        CS_PRINTF("%s -> %s\n",cs->current_state_name, #name);
+        CS_PRINTF("\"%s_%s\" [label = \"%s\"];",\
+            cs->parent_state_name,    \
+            cs->current_state_name,   \
+            cs->current_state_name);  \
+        CS_PRINTF("\"%s_%s\" [label = \"%s\"];",\
+            cs->parent_state_name,    \
+            #name, #name );           \
+        CS_PRINTF("%s_%s -> %s_%s\n", \
+            cs->parent_state_name,    \
+            cs->current_state_name,   \
+            cs->parent_state_name,    \
+            #name);
 #define ON_ENTER if( 0 )
 #define ON_EXIT if( 0 )
 #define INIT(cs)  
@@ -38,8 +50,12 @@ struct cs
 #define ENDSTATE(cs,name)			
 #define EXECUTE_BEGIN CS_PRINTF("digraph D {\n");
 #define EXECUTE_END CS_PRINTF("}\n");
-#define RUN( state_func, p_state_data )        \
-  state_func( &p_state_data );
+#define RUN( state_func, state_data )           \
+  CS_PRINTF( "subgraph cluster_%s {\n", #state_func );    \
+  CS_PRINTF( "  label = \"%s\";\n", #state_func );\
+  state_data.parent_state_name = #state_func;  \
+  state_func( &state_data );                    \
+  CS_PRINTF( "}\n" );   
 
 
 #else
@@ -74,8 +90,8 @@ struct cs
     if(cs->execute_on_exit == 0)                \
       CS_YIELD_FLAG = 0;		        \
     goto state_##name; 				
-#define EXECUTE_BEGIN int __ev; while(1) {
-#define EXECUTE_END __ev = get_next_event(); }
+#define EXECUTE_BEGIN int __ev = 0; while(1) {
+#define EXECUTE_END __ev = cs_get_next_event(); }
 #define RUN( state_func, p_state_data )        \
   p_state_data.event = __ev;                   \
   state_func( &p_state_data );
@@ -114,7 +130,50 @@ static int statemachine1(struct cs* cs)
   END(cs)
 }
 
-int get_next_event()
+
+static int statemachine2(struct cs* cs)
+{
+  BEGIN(cs)
+
+  STATE(cs,first)
+    TRANSITION(cs,'3', second);
+    ON_ENTER
+    {
+      printf("m2 state 3\n");
+    }
+    ON_EXIT
+    {
+      printf("m2 Left state 3\n");
+    }
+  ENDSTATE(cs,first);
+  
+  STATE(cs,second)
+    TRANSITION(cs,'4', third);
+    ON_ENTER
+    {
+      printf("m2 state 4\n");
+    }
+    ON_EXIT
+    {
+      printf("m2 Left state 4\n");
+    }
+  ENDSTATE(cs,second);
+  
+  STATE(cs,third)
+    TRANSITION(cs,'5', first);
+    ON_ENTER
+    {
+      printf("m2 state 5\n");
+    }
+    ON_EXIT
+    {
+      printf("m2 Left state 5\n");
+    }
+  ENDSTATE(cs,third);
+
+  END(cs)
+}
+int cs_get_next_event()
 {
   char ev;
   scanf( " %c", &ev );
@@ -126,10 +185,12 @@ static struct cs cs1,cs2;
 int main(int argc, char* argv[])
 {
   INIT(&cs1);
+  INIT(&cs2);
 
   EXECUTE_BEGIN 
     
     RUN( statemachine1, cs1 );
+    RUN( statemachine2, cs2 );
 
   EXECUTE_END
 }
