@@ -6,7 +6,7 @@
 
 static cs_t cs1,cs2, cs_nested;
 
-static int statemachine_nested(struct cs* cs)
+static int statemachine_nested(cs_t* cs)
 {
   BEGIN(cs)
 
@@ -38,7 +38,7 @@ static int statemachine_nested(struct cs* cs)
 }
 
 
-static int statemachine1(struct cs* cs)
+static int statemachine1(cs_t* cs)
 {
   BEGIN(cs)
 
@@ -71,7 +71,7 @@ static int statemachine1(struct cs* cs)
 }
 
 
-static int statemachine2(struct cs* cs)
+static int statemachine2(cs_t* cs)
 {
   BEGIN(cs)
 
