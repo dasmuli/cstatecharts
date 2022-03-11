@@ -27,7 +27,7 @@ void cs_add_event_with_parameters( int _event, int p1, int p2, int p3, int p4 )
 {
   if((cs_event_index_adding + 1) % EVENT_BUFFER_SIZE ==
     cs_event_index_execution )
-    CS_PRINTF("* Event buffer overflow, please increase EVENT_BUFFER_SIZE *");
+    CS_PRINTF("* Event buffer overflow, please increase EVENT_BUFFER_SIZE *\n");
   else
   {
     cyclic_event_buffer[cs_event_index_adding].event = _event;

@@ -6,6 +6,25 @@
 #include "cstatechart_settings.h"
 
 
+
+/* Generate an event in the statechart. This is buffered. */
+void cs_add_event( int event );
+
+/* Generate an event with 4 parameters. This is buffered. */
+void cs_add_event_with_parameters( int _event, int p1, int p2, int p3, int p4 );
+
+/* This is called automatically in EXECUTE_END to dequeue the next event
+   from the internal buffer. */
+void cs_get_next_event();
+
+/* Returns 1 if there are no events, and 0 otherwise. */
+int cs_event_buffer_empty();
+
+
+
+
+/* MACROS below, beware. */
+
 #if DOCUMENT != 0
 /* This collects names in document mode. */
 struct transition_data
@@ -157,19 +176,6 @@ extern int __ev;
   state_func( &p_state_data );
 
 #endif  /* #else of document mode */
-
-/* Generate an event in the statechart. This is buffered. */
-void cs_add_event( int event );
-
-/* Generate an event with 4 parameters. This is buffered. */
-void cs_add_event_with_parameters( int _event, int p1, int p2, int p3, int p4 );
-
-/* This is called automatically in EXECUTE_END to dequeue the next event
-   from the internal buffer. */
-void cs_get_next_event();
-
-/* Returns 1 if there are no events, and 0 otherwise. */
-int cs_event_buffer_empty();
 
 
 #endif
