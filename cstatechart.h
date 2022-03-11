@@ -7,7 +7,7 @@
 /* http://viz-js.com/ */
 
 
-#define DOCUMENT 1
+#define DOCUMENT 0
 #define CS_PRINTF printf
 
 
@@ -16,23 +16,30 @@ struct transition_data
   const char* ev;
   const char* target_name; 
 };
-typedef struct transition_data transition_data_t;
+typedef struct transition_data td_t;
 
 struct cs
 {
+  #if DOCUMENT == 0
   int event;
   lc_t lc;
   int timer;  /* idea: increase timer in milliseconds outside */
+  void* user_data;
+  #endif
+  
   const char* current_state_name;
   const char* parent_state_name;
   int execute_on_enter;
   int execute_on_exit;
-  void* user_data;
+  
   /* document related */
-  transition_data_t transition_data[100];
+  #if DOCUMENT != 0
+  td_t transition_data[100];
   int transition_count;
   int show_initial_transition;
+  #endif
 };
+typedef struct cs cs_t;
 
 #define CS_WAITING 0
 #define CS_YIELDED 1
@@ -41,6 +48,7 @@ struct cs
 
 
 #if DOCUMENT == 1
+/* This is the documentation mode for graphviz / dot. */
 
 #define STATE(cs,name)                \
   cs->current_state_name = #name;     \
@@ -100,7 +108,11 @@ struct cs
 
 #else
 
-int __ev = 0;
+/* This is the main execution mode generation. */
+
+/* This is the current active global event.
+   Should not be like this. */
+extern int __ev;
 
 #define STATE(cs,name)                          \
     state_##name:                               \
@@ -138,7 +150,7 @@ int __ev = 0;
   p_state_data.event = __ev;                   \
   state_func( &p_state_data );
 
-#endif
+#endif  /* #else of document mode */
 
 
 #endif

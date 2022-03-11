@@ -4,7 +4,7 @@
 #include "stdlib.h"
 #include "cstatechart.h"
 
-static struct cs cs1,cs2, cs_nested;
+static cs_t cs1,cs2, cs_nested;
 
 static int statemachine_nested(struct cs* cs)
 {
