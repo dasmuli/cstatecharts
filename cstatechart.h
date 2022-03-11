@@ -3,11 +3,13 @@
 #define cstate_h
 
 #include "lc.h"
+#include "cstatechart_settings.h"
 
 /* http://viz-js.com/ */
 
-
+#ifndef DOCUMENT
 #define DOCUMENT 0
+#endif
 #define CS_PRINTF printf
 
 
@@ -20,19 +22,20 @@ typedef struct transition_data td_t;
 
 struct cs
 {
+  /* Real execution related. */
   #if DOCUMENT == 0
   int event;
   lc_t lc;
   int timer;  /* idea: increase timer in milliseconds outside */
   void* user_data;
-  #endif
-  
-  const char* current_state_name;
-  const char* parent_state_name;
   int execute_on_enter;
   int execute_on_exit;
+  #endif
+  
   
   /* document related */
+  const char* current_state_name;
+  const char* parent_state_name;
   #if DOCUMENT != 0
   td_t transition_data[100];
   int transition_count;
