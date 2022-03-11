@@ -5,21 +5,20 @@
 #include "lc.h"
 #include "cstatechart_settings.h"
 
-/* http://viz-js.com/ */
 
-#ifndef DOCUMENT
-#define DOCUMENT 0
-#endif
-#define CS_PRINTF printf
-
-
+#if DOCUMENT != 0
+/* This collects names in document mode. */
 struct transition_data
 {
   const char* ev;
   const char* target_name; 
 };
 typedef struct transition_data td_t;
+#endif
 
+
+
+/* This is the main struc for statecharts that is passed around. */
 struct cs
 {
   /* Real execution related. */
@@ -33,10 +32,10 @@ struct cs
   #endif
   
   
-  /* document related */
+  /* Documentation related. */
+  #if DOCUMENT != 0
   const char* current_state_name;
   const char* parent_state_name;
-  #if DOCUMENT != 0
   td_t transition_data[100];
   int transition_count;
   int show_initial_transition;
@@ -117,6 +116,7 @@ typedef struct cs cs_t;
    Should not be like this. */
 extern int __ev;
 
+/* This is taken from protothread, cf. yield / wait. */
 #define STATE(cs,name)                          \
     state_##name:                               \
     LC_SET((cs)->lc);				\
