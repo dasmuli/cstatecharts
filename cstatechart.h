@@ -26,7 +26,10 @@ struct cs
   int event;
   lc_t lc;
   int timer;  /* idea: increase timer in milliseconds outside */
-  void* user_data;
+  int p1;
+  int p2;
+  int p3;
+  int p4;
   int execute_on_enter;
   int execute_on_exit;
   #endif
@@ -148,12 +151,25 @@ extern int __ev;
       CS_YIELD_FLAG = 0;		        \
     goto state_##name; 				
 #define EXECUTE_BEGIN  while(1) {
-#define EXECUTE_END __ev = cs_get_next_event(); }
+#define EXECUTE_END cs_get_next_event(); }
 #define RUN( state_func, p_state_data )        \
   p_state_data.event = __ev;                   \
   state_func( &p_state_data );
 
 #endif  /* #else of document mode */
+
+/* Generate an event in the statechart. This is buffered. */
+void cs_add_event( int event );
+
+/* Generate an event with 4 parameters. This is buffered. */
+void cs_add_event_with_parameters( int _event, int p1, int p2, int p3, int p4 );
+
+/* This is called automatically in EXECUTE_END to dequeue the next event
+   from the internal buffer. */
+void cs_get_next_event();
+
+/* Returns 1 if there are no events, and 0 otherwise. */
+int cs_event_buffer_empty();
 
 
 #endif

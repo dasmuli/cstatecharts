@@ -114,11 +114,16 @@ static int statemachine2(cs_t* cs)
   END(cs)
 }
 
-int cs_get_next_event()
+void get_next_key_event()
 {
   char ev;
-  scanf( " %c", &ev );
-  return (int) ev;
+  if(cs_event_buffer_empty())
+  {
+    do {
+      scanf( "%c", &ev );
+      cs_add_event( (int) ev ); /* Add event to statechart. */
+    } while(ev != '\n');
+  }
 }
 
 int main(int argc, char* argv[])
@@ -131,6 +136,8 @@ int main(int argc, char* argv[])
     
     RUN( statemachine1, cs1 );
     RUN( statemachine2, cs2 );
+    
+    get_next_key_event();
 
   EXECUTE_END
 }

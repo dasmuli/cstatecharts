@@ -1,6 +1,8 @@
 
--parallel state
--substates
+-parallel state DONE
+-substates      DONE
 -events
 -timers
--history states
+-history states DONE
+
+* no switch in statemachine function, or gnu c compiler with flag xy.
