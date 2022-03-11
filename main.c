@@ -23,8 +23,10 @@ struct cs
   int execute_on_enter;
   int execute_on_exit;
   void* user_data;
+  /* document related */
   transition_data_t transition_data[100];
   int transition_count;
+  int show_initial_transition;
 };
 
 #define CS_PRINTF printf
@@ -44,8 +46,8 @@ struct cs
   CS_PRINTF("subgraph cluster_%s_%s {\n",cs->parent_state_name,#name); \
   CS_PRINTF("style = rounded\n");   \
   CS_PRINTF("label = %s\n",#name);    \
-  CS_PRINTF("%s_%s_C [ style=invis, shape = plaintext, label=\"\", height=0, width=0 ];\n",\
-            cs->parent_state_name,#name);
+  CS_PRINTF("%s_%s_C [ style=invis, shape = point, label=\"\", height=0, width=0 ];\n",\
+            cs->parent_state_name,#name); 
 
 #define TRANSITION(cs,event,name)     \
    cs->transition_data[cs->transition_count].ev = #event; \
@@ -56,9 +58,19 @@ struct cs
 #define ON_ENTER if( 0 )
 #define ON_EXIT if( 0 )
 #define INIT(cs)  
-#define BEGIN(cs)  
+#define BEGIN(cs)  cs->show_initial_transition = 1;\
+  CS_PRINTF("node [margin=0 width=0.2 height=0.2 shape=circle style=filled]\n");\
+  CS_PRINTF("%s_initial [label=\"\" fillcolor=black]\n",cs->parent_state_name);
 #define END(cs)   
 #define ENDSTATE(cs,name) CS_PRINTF("}\n");	\
+    if(cs->show_initial_transition == 1) {                \
+    CS_PRINTF("%s_initial -> %s_%s_C [lhead=cluster_%s_%s ];\n",           \
+            cs->parent_state_name,              \
+            cs->parent_state_name,              \
+            cs->current_state_name, \
+            cs->parent_state_name,              \
+            cs->current_state_name);\
+      cs->show_initial_transition = 0; }        \
     for(int i = 0; i < cs->transition_count; i++)   \
     CS_PRINTF("%s_%s_C -> %s_%s_C [ltail=cluster_%s_%s lhead=cluster_%s_%s label=\"%s\" ];\n",           \
             cs->parent_state_name,              \
