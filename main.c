@@ -2,7 +2,7 @@
 
 #include "stdio.h"
 #include "stdlib.h"
-#include "cstate.h"
+#include "cstatechart.h"
 
 static struct cs cs1,cs2, cs_nested;
 
