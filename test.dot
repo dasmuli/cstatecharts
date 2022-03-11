@@ -1,7 +1,7 @@
 digraph D {
 compound=true
 graph [pad="0.5", nodesep="1", ranksep="1.75"];subgraph cluster_statemachine1 {
-style = rounded
+style = solid
   label = statemachine1
 subgraph cluster_statemachine1_first {
 style = rounded
@@ -14,7 +14,7 @@ style = rounded
 label = second
 statemachine1_second_C [ style=invis, shape = plaintext, label="", height=0, width=0 ];
 subgraph cluster_statemachine_nested {
-style = rounded
+style = solid
   label = statemachine_nested
 subgraph cluster_statemachine_nested_first {
 style = rounded
@@ -33,7 +33,7 @@ statemachine_nested_second_C -> statemachine_nested_first_C [ltail=cluster_state
 statemachine1_second_C -> statemachine1_first_C [ltail=cluster_statemachine1_second lhead=cluster_statemachine1_first label="'1'" ];
 }
 subgraph cluster_statemachine2 {
-style = rounded
+style = solid
   label = statemachine2
 subgraph cluster_statemachine2_first {
 style = rounded

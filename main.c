@@ -77,7 +77,7 @@ struct cs
   
 #define EXECUTE_END CS_PRINTF("}\n");
 #define RUN( state_func, state_data )           \
-  CS_PRINTF( "subgraph cluster_%s {\nstyle = rounded\n", #state_func );    \
+  CS_PRINTF( "subgraph cluster_%s {\nstyle = solid\n", #state_func );    \
   CS_PRINTF( "  label = %s\n", #state_func );\
   state_data.parent_state_name = #state_func;  \
   state_func( &state_data );                   \
