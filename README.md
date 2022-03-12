@@ -174,7 +174,7 @@ static int statemachine1(cs_t* cs)
 * Do not use blocking calls within the statecharts, better use polling.
 * One problem when using documentation mode is that no real production
   code should be called. The macros ON_ENTER and ON_EXIT are ignored,
-  so most system changing code should go there.
+  so most system code should go there.
 * All event ids are integers, so it might be beneficial to create an
   enum event_id{ event1 = 0, event2, ... };
 * Because the macros generate switch/case entries, no other switch/cases
