@@ -42,7 +42,7 @@ gcc cstatechart.c main.c
 ./a.out > test.dot
 dot -T pdf test.dot  > test.pdf
 ```
-Instead of calling dot, you can parte the contents of the dot file
+Instead of calling dot, you can paste the contents of the dot file
 to the website http://viz-js.com/.
 
 The output looks like this:
@@ -164,6 +164,8 @@ static int statemachine1(cs_t* cs)
   like good encapsulation, too, I think.
 * Maybe change some complex macros into function calls.
 * Better readable output for dot files. Messy right now.
+* Non-history statemachine exit and general exit behaviour 
+  is not defined.
 
 ## Help
 
