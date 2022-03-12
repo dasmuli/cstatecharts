@@ -124,6 +124,8 @@ static int statemachine1(cs_t* cs)
     cs_add_event_with_parameter( 123, "hi" ).
     Within ON_ENTER/ON_EXIT, the parameter can be accessed using 
     char* cs_get_event_parameter(). 
+  * Events can be generated in a statemachine to trigger transitions
+    in another statemachine. 
 * Parallel states
   * By calling the RUN macro multiple times within an EXECUTE_ or within
   a STATE pair, these statemachine functions are called in parallel. Well
