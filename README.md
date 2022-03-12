@@ -34,8 +34,12 @@ gcc cstatechart.c main.c
 The program does not stop, so the key combination ctrl+c 
 is needed to send a signal to the program stopping it.
 
-* The document mode can be activated by setting #define DOCUMENT 1
- in cstatechart_settings.h. Then, recompilation, running the program
+### Self-documentation of a program
+
+The document mode can be activated by setting #define DOCUMENT 1
+ in cstatechart_settings.h. It will change the program so that instead
+ of running the statechart it rather prints a dot file to the console. 
+ Recompilation, running the program
  and conversion of the resulting file can be done with
 ```
 gcc cstatechart.c main.c 
