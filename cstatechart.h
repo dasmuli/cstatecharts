@@ -181,7 +181,7 @@ extern double __elapsed_time;
 
 #define TIME_TRANSITION(cs,time,name)           \
   do {                                          \
-    if(cs->timer > time) {                      \
+    if(cs->timer >= time) {                     \
       if(cs->execute_on_exit == 0) {            \
         cs->execute_on_exit = 1;                \
       } else {                                  \
