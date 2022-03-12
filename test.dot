@@ -1,0 +1,66 @@
+digraph D {
+compound=true
+graph [pad="0.5", nodesep="1", ranksep="1.75"];subgraph cluster_statemachine1 {
+style = dashed
+  label = statemachine1
+node [margin=0 width=0.2 height=0.2 shape=circle style=filled]
+statemachine1_initial [label="" fillcolor=black]
+subgraph cluster_statemachine1_first {
+style = rounded
+label = first
+statemachine1_first_C [ style=invis, shape = point, label="", height=0, width=0 ];
+}
+statemachine1_initial -> statemachine1_first_C [lhead=cluster_statemachine1_first ];
+statemachine1_first_C -> statemachine1_second_C [ltail=cluster_statemachine1_first lhead=cluster_statemachine1_second label="'2'" ];
+subgraph cluster_statemachine1_second {
+style = rounded
+label = second
+statemachine1_second_C [ style=invis, shape = point, label="", height=0, width=0 ];
+subgraph cluster_statemachine_nested {
+style = dashed
+  label = statemachine_nested
+node [margin=0 width=0.2 height=0.2 shape=circle style=filled]
+statemachine_nested_initial [label="" fillcolor=black]
+subgraph cluster_statemachine_nested_first {
+style = rounded
+label = first
+statemachine_nested_first_C [ style=invis, shape = point, label="", height=0, width=0 ];
+}
+statemachine_nested_initial -> statemachine_nested_first_C [lhead=cluster_statemachine_nested_first ];
+statemachine_nested_first_C -> statemachine_nested_second_C [ltail=cluster_statemachine_nested_first lhead=cluster_statemachine_nested_second label="0.5s" ];
+subgraph cluster_statemachine_nested_second {
+style = rounded
+label = second
+statemachine_nested_second_C [ style=invis, shape = point, label="", height=0, width=0 ];
+}
+statemachine_nested_second_C -> statemachine_nested_first_C [ltail=cluster_statemachine_nested_second lhead=cluster_statemachine_nested_first label="2.5s" ];
+}
+}
+statemachine1_second_C -> statemachine1_first_C [ltail=cluster_statemachine1_second lhead=cluster_statemachine1_first label="'1'" ];
+}
+subgraph cluster_statemachine2 {
+style = dashed
+  label = statemachine2
+node [margin=0 width=0.2 height=0.2 shape=circle style=filled]
+statemachine2_initial [label="" fillcolor=black]
+subgraph cluster_statemachine2_first {
+style = rounded
+label = first
+statemachine2_first_C [ style=invis, shape = point, label="", height=0, width=0 ];
+}
+statemachine2_initial -> statemachine2_first_C [lhead=cluster_statemachine2_first ];
+statemachine2_first_C -> statemachine2_second_C [ltail=cluster_statemachine2_first lhead=cluster_statemachine2_second label="'3'" ];
+subgraph cluster_statemachine2_second {
+style = rounded
+label = second
+statemachine2_second_C [ style=invis, shape = point, label="", height=0, width=0 ];
+}
+statemachine2_second_C -> statemachine2_third_C [ltail=cluster_statemachine2_second lhead=cluster_statemachine2_third label="'4'" ];
+subgraph cluster_statemachine2_third {
+style = rounded
+label = third
+statemachine2_third_C [ style=invis, shape = point, label="", height=0, width=0 ];
+}
+statemachine2_third_C -> statemachine2_first_C [ltail=cluster_statemachine2_third lhead=cluster_statemachine2_first label="'5'" ];
+}
+}

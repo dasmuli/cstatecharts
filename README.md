@@ -19,7 +19,7 @@ generate and automatically layout a statechart diagram.
 * It uses parts from Protothread by Adam Dunkels, these are included.
 
 ### Installing
-
+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
 * Create the executable a.out with by calling
 ```
 gcc cstatechart.c main.c 
@@ -61,7 +61,7 @@ IMAGE
   EXECUTE_END
 ```
   The INIT function must be called once on all statechart data variables.
-  The EXECUTE_ macros are and endless loop that deqeue events and
+  The EXECUTE_ macros are an endless loop that deqeue events and
   automatically call all statemachine functions using the RUN macro.
   The statemachine execution is considered parallel, although no 
   threads are used.
