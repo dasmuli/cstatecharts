@@ -20,7 +20,7 @@ generate and automatically layout a statechart diagram.
 
 ### Installing
 
-* Create the executable a.out with by calling
+* Create the executable a.out with
 ```
 gcc cstatechart.c main.c 
 ```
