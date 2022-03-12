@@ -46,7 +46,8 @@ Instead of calling dot, you can parte the contents of the dot file
 to the website http://viz-js.com/.
 
 The output looks like this:
-IMAGE
+![Alt text](./test.svg)
+<img src="./test.svg">
 
 ## API
 
