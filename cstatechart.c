@@ -4,6 +4,10 @@
 
 cs_event_t* __ev;
 
+clock_t __execution_start_time;
+
+double __elapsed_time;
+
 static cs_event_t cyclic_event_buffer[EVENT_BUFFER_SIZE];
 static int cs_event_index_execution = 0;
 static int cs_event_index_adding = 0;
@@ -50,5 +54,7 @@ int cs_event_buffer_empty()
 
 char* cs_get_event_parameter()
 {
+  if(__ev == NULL)  /* Hm. Initial / time transition do not have events. */
+    return (char*)&cyclic_event_buffer[0].parameter;
   return __ev->parameter;
 }

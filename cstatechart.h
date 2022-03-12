@@ -3,6 +3,7 @@
 #define cstate_h
 
 #include "lc.h"
+#include "time.h"
 #include "cstatechart_settings.h"
 
 
@@ -39,19 +40,23 @@ typedef struct transition_data td_t;
 #endif
 
 
+/* This is the main event structure. */
+struct cs_event
+{
+  int event;
+  char parameter[MAX_PARAMETER_SIZE];
+};
+typedef struct cs_event cs_event_t;
+
 
 /* This is the main struc for statecharts that is passed around. */
 struct cs
 {
   /* Real execution related. */
   #if DOCUMENT == 0
-  int event;
+  cs_event_t* event;
   lc_t lc;
-  int timer;  /* idea: increase timer in milliseconds outside */
-  int p1;
-  int p2;
-  int p3;
-  int p4;
+  double timer;  /* timer in seconds to trigger transitions */
   int execute_on_enter;
   int execute_on_exit;
   #endif
@@ -137,16 +142,14 @@ typedef struct cs cs_t;
 
 /* This is the main execution mode generation. */
 
-/* This is the main event structure. */
-struct cs_event
-{
-  int event;
-  char parameter[MAX_PARAMETER_SIZE];
-};
-typedef struct cs_event cs_event_t;
-
 /* The current active event applied on all statecharts. */
 extern cs_event_t* __ev;
+
+/* This is used to measure the elapsed time. */
+extern clock_t __execution_start_time;
+
+/* This is the elapsed time. */
+extern double __elapsed_time;
 
 
 /* This is taken from protothread, cf. yield / wait. */
@@ -154,11 +157,13 @@ extern cs_event_t* __ev;
     state_##name:                               \
     LC_SET((cs)->lc);				\
     if(CS_YIELD_FLAG == 0) 			\
-      return CS_YIELDED;			
+      return CS_YIELDED;			\
+    if(cs->execute_on_enter)                    \
+      cs->timer = 0;
 
 #define TRANSITION(cs,ev,name)                  \
   do {                                          \
-    if(cs->event == ev) {                       \
+    if(cs->event && cs->event->event == ev)   { \
       if(cs->execute_on_exit == 0) {            \
         cs->execute_on_exit = 1;                \
       } else {                                  \
@@ -169,6 +174,18 @@ extern cs_event_t* __ev;
     }                                           \
   } while (0)
 
+#define TIME_TRANSITION(cs,time,name)           \
+  do {                                          \
+    if(cs->timer > time) {                      \
+      if(cs->execute_on_exit == 0) {            \
+        cs->execute_on_exit = 1;                \
+      } else {                                  \
+        cs->execute_on_enter=1;                 \
+        cs->execute_on_exit = 0;                \
+        goto state_##name;                      \
+      }                                         \
+    }                                           \
+  } while (0)
 #define ON_ENTER if( cs->execute_on_enter )
 #define ON_EXIT if( cs->execute_on_exit )
 #define INIT(cs)   LC_INIT((cs)->lc); (cs)->execute_on_enter = 1; (cs)->execute_on_exit = 0; 
@@ -176,16 +193,19 @@ extern cs_event_t* __ev;
 #define END(cs)    LC_END((pt)->lc); CS_YIELD_FLAG = 0; \
                     INIT(cs); return CS_ENDED; }
 #define ENDSTATE(cs,name)			\
+    cs->timer += __elapsed_time;                \
     cs->execute_on_enter=0;                     \
     if(cs->execute_on_exit == 0)                \
       CS_YIELD_FLAG = 0;		        \
     goto state_##name; 				
-#define EXECUTE_BEGIN  while(1) {
-#define EXECUTE_END cs_get_next_event(); }
+#define EXECUTE_BEGIN  while(1) { __execution_start_time = clock();
+#define EXECUTE_END                            \
+  __elapsed_time = (double)(clock()            \
+  - __execution_start_time) / CLOCKS_PER_SEC;  \
+  cs_get_next_event(); }
 #define RUN( state_func, p_state_data )        \
-  if(__ev != NULL) {                           \
-  p_state_data.event = __ev->event;            \
-  state_func( &p_state_data ); };
+  p_state_data.event = __ev;                   \
+  state_func( &p_state_data );
 
 #endif  /* #else of document mode */
 

@@ -3,6 +3,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "cstatechart.h"
+#include <sys/poll.h>
 
 static cs_t cs1,cs2, cs_nested;
 
@@ -11,19 +12,19 @@ static int statemachine_nested(cs_t* cs)
   BEGIN(cs)
 
   STATE(cs,first)
-    TRANSITION(cs,'7', second);
+    TIME_TRANSITION(cs,0.5, second);
     ON_ENTER
     {
-      printf("NESTED state 6\n");
+      printf("NESTED state 6, timer: %f\n",cs->timer);
     }
     ON_EXIT
     {
-      printf("NESTED left state 6\n");
+      printf("NESTED left state 6, timer: %f\n,",cs->timer);
     }
   ENDSTATE(cs,first);
   
   STATE(cs,second)
-    TRANSITION(cs,'6', first);
+    TIME_TRANSITION(cs,2.5, first);
     ON_ENTER
     {
       printf("NESTED state 7\n");
@@ -114,11 +115,26 @@ static int statemachine2(cs_t* cs)
   END(cs)
 }
 
+
+int poll_stdin(void)
+{
+        struct pollfd fds;
+        int ret;
+        fds.fd = 0; /* this is STDIN */
+        fds.events = POLLIN;
+        ret = poll(&fds, 1, 0);
+        if(ret == 1)
+                return 1;
+        else
+                return 0;
+        return 0;
+}
+
 static int counter = 0;
 void get_next_key_event()
 {
   char ev;
-  if(cs_event_buffer_empty())
+  if(poll_stdin())
   {
     do {
       scanf( "%c", &ev );
