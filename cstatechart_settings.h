@@ -26,9 +26,6 @@
 /* The maximum size of parameters in bytes. */
 #define MAX_PARAMETER_SIZE 4
 
-
-/* This is the timer resolution of the statechart. */
-#define TIME_RESOLUTION 0.010
  
 
 #endif
