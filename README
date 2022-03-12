@@ -7,3 +7,5 @@
 -history states DONE
 
 * no switch in statemachine function, or gnu c compiler with flag xy.
+
+dot -T pdf test.dot  > test.pdf

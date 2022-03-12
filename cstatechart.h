@@ -56,11 +56,11 @@ struct cs
   #if DOCUMENT == 0
   cs_event_t* event;
   lc_t lc;
-  double timer;  /* timer in seconds to trigger transitions */
   int execute_on_enter;
   int execute_on_exit;
   #endif
   
+  double timer;  /* timer in seconds to trigger transitions */
   
   /* Documentation related. */
   #if DOCUMENT != 0
@@ -93,6 +93,11 @@ typedef struct cs cs_t;
 
 #define TRANSITION(cs,event,name)     \
    cs->transition_data[cs->transition_count].ev = #event; \
+   cs->transition_data[cs->transition_count].target_name = #name; \
+   cs->transition_count++;
+   
+#define TIME_TRANSITION(cs,time,name)     \
+   cs->transition_data[cs->transition_count].ev = #time "s"; \
    cs->transition_data[cs->transition_count].target_name = #name; \
    cs->transition_count++;
   

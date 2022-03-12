@@ -27,13 +27,13 @@ label = first
 statemachine_nested_first_C [ style=invis, shape = point, label="", height=0, width=0 ];
 }
 statemachine_nested_initial -> statemachine_nested_first_C [lhead=cluster_statemachine_nested_first ];
-statemachine_nested_first_C -> statemachine_nested_second_C [ltail=cluster_statemachine_nested_first lhead=cluster_statemachine_nested_second label="'7'" ];
+statemachine_nested_first_C -> statemachine_nested_second_C [ltail=cluster_statemachine_nested_first lhead=cluster_statemachine_nested_second label="0.5s" ];
 subgraph cluster_statemachine_nested_second {
 style = rounded
 label = second
 statemachine_nested_second_C [ style=invis, shape = point, label="", height=0, width=0 ];
 }
-statemachine_nested_second_C -> statemachine_nested_first_C [ltail=cluster_statemachine_nested_second lhead=cluster_statemachine_nested_first label="'6'" ];
+statemachine_nested_second_C -> statemachine_nested_first_C [ltail=cluster_statemachine_nested_second lhead=cluster_statemachine_nested_first label="2.5s" ];
 }
 }
 statemachine1_second_C -> statemachine1_first_C [ltail=cluster_statemachine1_second lhead=cluster_statemachine1_first label="'1'" ];
