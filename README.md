@@ -19,7 +19,7 @@ generate and automatically layout a statechart diagram.
 * It uses parts from Protothread by Adam Dunkels, these are included.
 
 ### Installing
-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
+
 * Create the executable a.out with by calling
 ```
 gcc cstatechart.c main.c 
