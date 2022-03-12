@@ -46,8 +46,8 @@ Instead of calling dot, you can parte the contents of the dot file
 to the website http://viz-js.com/.
 
 The output looks like this:
-![Alt text](./test.svg)
-<img src="./test.svg">
+![The statechart generated from main.c](./test.svg)
+
 
 ## API
 
