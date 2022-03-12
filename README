@@ -1,7 +1,8 @@
 
 -parallel state DONE
 -substates      DONE
--events
+-events         DONE
+-parameters
 -timers
 -history states DONE
 

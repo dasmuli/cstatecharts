@@ -10,8 +10,8 @@
 /* Generate an event in the statechart. This is buffered. */
 void cs_add_event( int event );
 
-/* Generate an event with 4 parameters. This is buffered. */
-void cs_add_event_with_parameters( int _event, int p1, int p2, int p3, int p4 );
+/* Generate an event with a parameter. This is buffered. */
+void cs_add_event_with_parameter( int _event, char* parameter );
 
 /* This is called automatically in EXECUTE_END to dequeue the next event
    from the internal buffer. */
@@ -19,6 +19,9 @@ void cs_get_next_event();
 
 /* Returns 1 if there are no events, and 0 otherwise. */
 int cs_event_buffer_empty();
+
+/* Returns the parameter that was used to enter the event. */
+char* cs_get_event_parameter();
 
 
 
@@ -134,9 +137,17 @@ typedef struct cs cs_t;
 
 /* This is the main execution mode generation. */
 
-/* This is the current active global event.
-   Should not be like this. */
-extern int __ev;
+/* This is the main event structure. */
+struct cs_event
+{
+  int event;
+  char parameter[MAX_PARAMETER_SIZE];
+};
+typedef struct cs_event cs_event_t;
+
+/* The current active event applied on all statecharts. */
+extern cs_event_t* __ev;
+
 
 /* This is taken from protothread, cf. yield / wait. */
 #define STATE(cs,name)                          \
@@ -172,8 +183,9 @@ extern int __ev;
 #define EXECUTE_BEGIN  while(1) {
 #define EXECUTE_END cs_get_next_event(); }
 #define RUN( state_func, p_state_data )        \
-  p_state_data.event = __ev;                   \
-  state_func( &p_state_data );
+  if(__ev != NULL) {                           \
+  p_state_data.event = __ev->event;            \
+  state_func( &p_state_data ); };
 
 #endif  /* #else of document mode */
 

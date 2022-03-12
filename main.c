@@ -46,7 +46,7 @@ static int statemachine1(cs_t* cs)
     TRANSITION(cs,'2', second);
     ON_ENTER
     {
-      printf("state 1\n");
+      printf("state 1, parameter: %i\n", *((int*)cs_get_event_parameter()) );
     }
     ON_EXIT
     {
@@ -114,6 +114,7 @@ static int statemachine2(cs_t* cs)
   END(cs)
 }
 
+static int counter = 0;
 void get_next_key_event()
 {
   char ev;
@@ -121,7 +122,9 @@ void get_next_key_event()
   {
     do {
       scanf( "%c", &ev );
-      cs_add_event( (int) ev ); /* Add event to statechart. */
+      /* Add event to statechart. */
+      cs_add_event_with_parameter( (int) ev, (char*)&counter ); 
+      counter++;
     } while(ev != '\n');
   }
 }

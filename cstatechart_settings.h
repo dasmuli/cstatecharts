@@ -22,6 +22,9 @@
    This amounts to EVENT_BUFFER_SIZE * 5 * 4 bytes. */
 #define EVENT_BUFFER_SIZE 100
 
+
+/* The maximum size of parameters in bytes. */
+#define MAX_PARAMETER_SIZE 4
  
 
 #endif
