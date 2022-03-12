@@ -2,10 +2,14 @@
 -parallel state DONE
 -substates      DONE
 -events         DONE
--parameters
--timers
+-parameters     DONE
+-timers         DONE
 -history states DONE
 
 * no switch in statemachine function, or gnu c compiler with flag xy.
 
 dot -T pdf test.dot  > test.pdf
+
+gcc cstatechart.c main.c 
+
+Parameters problem: not for initial and timed transitions.
