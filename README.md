@@ -15,7 +15,7 @@ generate and automatically layout a statechart diagram.
 
 ### Dependencies
 
-* C language, no specific OS, but the example is geared towards linux
+* C language, no specific OS, but the example is geared towards Linux
 * It uses parts from Protothread by Adam Dunkels, these are included.
 
 ### Installing
@@ -42,9 +42,11 @@ gcc cstatechart.c main.c
 ./a.out > test.dot
 dot -T pdf test.dot  > test.pdf
 ```
-
 Instead of calling dot, you can parte the contents of the dot file
 to the website http://viz-js.com/.
+
+The output looks like this:
+IMAGE
 
 ## API
 
@@ -195,4 +197,5 @@ See license file
 * David Harel for inventing statecharts I guess, using them for years
   now (with a complex visual tool). 
   Cf. "Statecharts: a visual formalism for complex systems."
+* The people behind graphviz.
 
